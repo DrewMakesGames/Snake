@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine.UI;
+
 
 public class Snake : MonoBehaviour {
     // Current Movement Direction
@@ -12,14 +14,16 @@ public class Snake : MonoBehaviour {
 
 	// Did the snake eat something?
 	bool ate = false;
-	
+	public int score = 0;
+	public Text scoreText;
+
 	// Tail Prefab
 	public GameObject tailPrefab;
 
     // Use this for initialization
     void Start () {
         // Move the Snake every 300ms
-        InvokeRepeating("Move", 0.3f, 0.3f);    
+        InvokeRepeating("Move", 0.2f, 0.2f);    
     }
     
     // Update is called once per frame
@@ -66,17 +70,23 @@ public class Snake : MonoBehaviour {
 	}
 
 	void OnTriggerEnter2D(Collider2D coll) {
-    // Food?
-    if (coll.name.StartsWith("FoodPrefab")) {
-        // Get longer in next Move call
-        ate = true;
-        
-        // Remove the Food
-        Destroy(coll.gameObject);
-    }
-    // Collided with Tail or Border
-    else {
-        // ToDo 'You lose' screen
-    }
-}
+		// Food?
+		if (coll.name.StartsWith("FoodPrefab")) {
+
+			// Get longer in next Move call
+			ate = true;
+			
+			score++;
+			scoreText.text = score.ToString();
+			
+			// Remove the Food
+			Destroy(coll.gameObject);
+		}
+		// Collided with Tail or Border
+		else {
+			CancelInvoke();
+			FindObjectOfType<GameManager>().EndGame();
+		}
+	}
+
 }
